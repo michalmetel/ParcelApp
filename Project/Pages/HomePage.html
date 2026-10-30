@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CMS – Courier Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#14284b; --blue:#2f5d9e; --blue-dark:#244a80; --hero:#3d68a8;
+  --ink:#1b2437; --muted:#5b667b; --line:#dbe2ee; --bg:#f4f6fa; --accent:#f2b705;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Mulish","Segoe UI",system-ui,Arial,sans-serif;color:var(--ink);line-height:1.6;background:var(--bg);min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none}
+.container{width:min(1120px,100% - 40px);margin-inline:auto}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* Background: quiet route with a single moving dot (stays at the top and scrolls away with the page) */
+.bg{position:absolute;top:0;left:0;width:100%;height:max(100vh,720px);z-index:-1;overflow:hidden;pointer-events:none;
+    -webkit-mask-image:linear-gradient(#000 78%,transparent);mask-image:linear-gradient(#000 78%,transparent)}
+.bg svg{position:absolute;inset:0;width:100%;height:100%}
+
+/* Top bar */
+.topbar{background:var(--navy);color:#fff}
+.topbar-inner{display:flex;justify-content:space-between;align-items:center;min-height:38px}
+.audience{display:flex;gap:26px}
+.audience a{font-size:.78rem;font-weight:700;opacity:.85;transition:opacity .2s}
+.audience a:hover{opacity:1}
+.auth{display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;border:0;cursor:pointer;font:inherit;font-weight:800;border-radius:4px;transition:background .2s,color .2s}
+.btn-sm{padding:4px 16px;font-size:.76rem}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
+.btn-ghost:hover{background:rgba(255,255,255,.12)}
+.btn-solid{background:#fff;color:var(--navy)}
+.btn-solid:hover{background:#e8eef8}
+
+/* Navbar */
+.nav-wrap{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line)}
+.navbar{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:76px}
+.logo{display:grid;place-items:center;flex-shrink:0;width:74px;height:54px;border:1.5px solid var(--blue);border-radius:50%;font-size:.6rem;color:#7b5ea7}
+.main-nav{display:flex;gap:clamp(18px,5vw,64px);flex:1;justify-content:center}
+.main-nav a{font-weight:800;color:var(--blue);padding:8px 2px;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+.main-nav a:hover,.main-nav a.active{color:var(--navy);border-color:var(--navy)}
+.search{display:flex;align-items:center;gap:8px;color:var(--blue);border:1.5px solid var(--blue);border-radius:999px;padding:4px 14px;background:#fff}
+.search input{border:0;outline:0;background:transparent;width:150px;font:inherit;font-size:.82rem;color:var(--ink)}
+.menu-toggle{display:none;background:none;border:0;cursor:pointer;padding:8px;margin-left:auto}
+.menu-toggle span{display:block;width:24px;height:3px;margin:4px 0;background:var(--navy);border-radius:2px}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:1.45fr 1fr;gap:56px;align-items:center;padding:64px 0 40px}
+.hero-card{display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:0 24px;padding:32px 36px;min-height:210px;background:var(--hero);color:#fff;border-radius:6px}
+.hero-main h1{font-size:1.5rem;font-weight:800;line-height:1.25}
+.hero-main p{font-size:.96rem;line-height:1.55;margin-top:8px;max-width:260px;color:rgba(255,255,255,.9)}
+.btn-ship{margin-top:20px;gap:10px;background:#fff;color:var(--navy);padding:12px 26px;font-size:.94rem}
+.btn-ship:hover{background:#e8eef8}
+.btn-ship img{width:16px;height:16px;transition:transform .2s}
+.btn-ship:hover img{transform:translateX(3px)}
+.hero-points{display:grid;gap:22px;padding-left:12px}
+.hero-points li{display:flex;align-items:center;gap:14px;font-size:1.15rem;font-weight:700}
+.hero-points img{width:26px;height:26px;flex-shrink:0}
+
+.track-card{background:#fff;border:1px solid var(--line);padding:22px 26px 26px;border-radius:6px;max-width:350px;width:100%}
+.track-card h2{font-size:1.1rem;font-weight:800;margin-bottom:12px;color:var(--navy)}
+.track-row{display:flex;border:2px solid var(--blue);border-radius:6px;overflow:hidden}
+.track-row input{flex:1;min-width:0;border:0;outline:0;padding:11px 12px;font:inherit;font-size:.82rem;text-align:center}
+.track-row button{border:0;cursor:pointer;font:inherit;font-weight:800;font-size:.82rem;color:#fff;background:var(--blue);padding:0 28px;transition:background .2s}
+.track-row button:hover{background:var(--blue-dark)}
+
+/* Tracking timeline */
+.track-result{max-height:0;overflow:hidden;opacity:0;transition:max-height .5s ease,opacity .4s ease,margin .4s}
+.track-result.show{max-height:130px;opacity:1;margin-top:22px}
+.tl{position:relative;padding-top:4px}
+.tl-bar{position:absolute;top:13px;left:16.67%;right:16.67%;height:3px;background:var(--line)}
+.tl-bar span{display:block;height:100%;width:0;background:var(--blue);transition:width .9s ease}
+.tl-steps{position:relative;display:grid;grid-template-columns:repeat(3,1fr);text-align:center;font-size:.72rem;font-weight:700;color:var(--muted)}
+.tl-steps li{display:flex;flex-direction:column;align-items:center;gap:6px}
+.tl-steps b{width:20px;height:20px;border-radius:50%;background:#c6d1e3;display:grid;place-items:center;color:#fff;font-size:.62rem;transition:background .3s}
+.tl-steps li.on,.tl-steps li.done{color:var(--ink)}
+.tl-steps li.on b{background:var(--blue)}
+.tl-steps li.done b{background:var(--navy);font-size:0}
+.tl-steps li.done b::after{content:"✓";font-size:.7rem}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border:1px solid var(--line);border-radius:6px;padding:6px 0}
+.stats li{display:flex;align-items:center;gap:16px;padding:16px 28px}
+.stats li+li{border-left:1px solid var(--line)}
+.stats img{width:40px;height:40px;flex-shrink:0}
+.stats strong{display:block;font-size:1.7rem;font-weight:800;line-height:1.1;color:var(--navy)}
+.stats span{font-size:.8rem;font-weight:600;color:var(--muted)}
+
+/* Services */
+.section{margin-top:96px}
+.section h2{font-size:1.6rem;font-weight:800;color:var(--navy);margin-bottom:6px}
+.section>p{color:var(--muted);margin-bottom:30px;max-width:540px}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid var(--line);border-radius:6px}
+.fact{padding:28px 24px 30px}
+.fact+.fact{border-left:1px solid var(--line)}
+.fact h3{font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:8px}
+.fact p{font-size:.92rem;color:var(--muted)}
+
+.account{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:56px;padding:24px 28px;background:var(--navy);color:#fff;border-radius:6px}
+.account p{font-weight:700;font-size:1.05rem}
+.account div{display:flex;gap:12px}
+.btn-md{padding:10px 26px;font-size:.9rem;background:#fff;color:var(--navy)}
+.btn-md:hover{background:#e8eef8}
+.btn-line{padding:8px 24px;font-size:.9rem;background:transparent;color:#fff;border:2px solid rgba(255,255,255,.6)}
+.btn-line:hover{background:rgba(255,255,255,.12)}
+
+/* Footer */
+.footer{margin-top:80px;background:var(--navy);color:rgba(255,255,255,.78);font-size:.9rem}
+.footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr;gap:40px;padding:48px 0 36px}
+.footer h4{color:#fff;font-size:.9rem;font-weight:800;margin-bottom:14px}
+.footer li+li{margin-top:8px}
+.footer a:hover{color:#fff;text-decoration:underline}
+.footer-brand p{max-width:280px;margin-top:12px}
+.footer .logo{border-color:rgba(255,255,255,.6);color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.15);padding:18px 0;font-size:.82rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+/* Motion */
+.enter{animation:rise .6s ease-out backwards;animation-delay:var(--d,0s)}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}}
+.reveal{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+
+/* Responsive */
+@media (max-width:960px){
+  .hero{grid-template-columns:minmax(0,1fr);padding:40px 0 28px;gap:28px}
+  .track-card{max-width:none}
+  .menu-toggle{display:block}
+  .navbar{flex-wrap:wrap;padding:12px 0}
+  .main-nav{display:none;order:3;width:100%;flex-direction:column;gap:2px}
+  .main-nav.open{display:flex}
+  .main-nav a{padding:12px 4px}
+  .search{order:4;width:100%;margin-bottom:8px}.search input{width:100%}
+  .facts{grid-template-columns:1fr 1fr}
+  .fact:nth-child(3){border-left:0}
+  .fact:nth-child(n+3){border-top:1px solid var(--line)}
+  .footer-top{grid-template-columns:1fr 1fr}
+}
+@media (max-width:700px){
+  .hero-card{grid-template-columns:1fr;gap:22px}
+  .hero-points{padding-left:0}
+  .stats{grid-template-columns:1fr}
+  .stats li+li{border-left:0;border-top:1px solid var(--line)}
+  .facts{grid-template-columns:1fr}
+  .fact+.fact{border-left:0;border-top:1px solid var(--line)}
+  .audience{gap:16px}
+  .footer-top{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <svg id="routeSvg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <path id="routePath" d="M-20 700 C200 560 330 760 520 600 S820 380 960 470 S1180 330 1240 250" fill="none" stroke="rgba(47,93,158,.22)" stroke-width="3" stroke-dasharray="6 14" stroke-linecap="round"/>
+    <circle r="16" fill="#f2b705" opacity=".2"><animateMotion dur="14s" repeatCount="indefinite"><mpath href="#routePath"/></animateMotion></circle>
+    <circle r="7" fill="#f2b705"><animateMotion dur="14s" repeatCount="indefinite"><mpath href="#routePath"/></animateMotion></circle>
+  </svg>
+</div>
+
+<div class="topbar">
+  <div class="container topbar-inner">
+    <nav class="audience" aria-label="Audience">
+      <a href="client.html">Clients</a>
+      <a href="courier.html">Couriers</a>
+      <a href="about.html#corporate">Corporate</a>
+    </nav>
+    <div class="auth">
+      <a class="btn btn-sm btn-ghost" href="login.html">Login</a>
+      <a class="btn btn-sm btn-solid" href="login.html#register">Register</a>
+    </div>
+  </div>
+</div>
+
+<header class="nav-wrap">
+  <div class="container navbar">
+    <a class="logo" href="index.html" aria-label="CMS home">CMS Logo</a>
+    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <nav class="main-nav" id="mainNav" aria-label="Main">
+      <a href="index.html" class="active">Home</a>
+      <a href="services.html">Our Services</a>
+      <a href="about.html">About Us</a>
+      <a href="support.html">Support</a>
+    </nav>
+    <form class="search" id="searchForm" role="search">
+      <label class="sr-only" for="searchInput">Search</label>
+      <img src="../Assets/images/icon-search.svg" width="14" height="14" alt="">
+      <input type="search" id="searchInput" placeholder="Search" autocomplete="off">
+    </form>
+  </div>
+</header>
+
+<main>
+  <section class="container hero" aria-labelledby="heroTitle">
+    <div class="hero-card enter">
+      <div class="hero-main">
+        <h1 id="heroTitle">Need to send a parcel?</h1>
+        <p>Fast and secure courier delivery for business and individual.</p>
+        <a class="btn btn-ship" href="client.html">Ship Parcel
+          <img src="../Assets/images/icon-arrow-right.svg" alt="">
+        </a>
+      </div>
+      <ul class="hero-points">
+        <li>
+          <img src="../Assets/images/icon-location.svg" alt="">
+          <span>Real time tracking</span>
+        </li>
+        <li>
+          <img src="../Assets/images/icon-bolt.svg" alt="">
+          <span>Express Delivery</span>
+        </li>
+      </ul>
+    </div>
+
+    <aside class="track-card enter" style="--d:.12s" aria-labelledby="trackTitle">
+      <h2 id="trackTitle">Track your shipment</h2>
+      <form id="trackForm">
+        <div class="track-row">
+          <label class="sr-only" for="trackingNumber">Tracking number</label>
+          <input type="text" id="trackingNumber" placeholder="Enter tracking number" autocomplete="off">
+          <button type="submit">Track</button>
+        </div>
+      </form>
+      <div class="track-result" id="trackResult" aria-live="polite">
+        <div class="tl">
+          <div class="tl-bar"><span id="tlFill"></span></div>
+          <ol class="tl-steps">
+            <li><b>1</b>Initiated</li>
+            <li><b>2</b>In Progress</li>
+            <li><b>3</b>Completed</li>
+          </ol>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="container" aria-label="Key metrics">
+    <ul class="stats enter" style="--d:.24s">
+      <li>
+        <img src="../Assets/images/icon-clients.svg" alt="">
+        <div><strong data-count="1200">1,200+</strong><span>Active Clients</span></div>
+      </li>
+      <li>
+        <img src="../Assets/images/icon-courier.svg" alt="">
+        <div><strong data-count="450">450+</strong><span>Couriers Online</span></div>
+      </li>
+      <li>
+        <img src="../Assets/images/icon-truck.svg" alt="">
+        <div><strong data-count="15000">15,000+</strong><span>Completed Deliveries</span></div>
+      </li>
+    </ul>
+  </section>
+
+  <section class="container section reveal" aria-labelledby="hlTitle">
+    <h2 id="hlTitle">What the service covers</h2>
+    <p>From the moment an order is placed to the moment it is handed over.</p>
+    <div class="facts">
+      <div class="fact">
+        <h3>Order status</h3>
+        <p>Check any order at any time: initiated, in progress or completed.</p>
+      </div>
+      <div class="fact">
+        <h3>Right vehicle for the load</h3>
+        <p>Every order goes on a vehicle that can carry its weight and volume.</p>
+      </div>
+      <div class="fact">
+        <h3>Checked couriers and vehicles</h3>
+        <p>Staff review insurance and inspection documents before a vehicle is used.</p>
+      </div>
+      <div class="fact">
+        <h3>Proof of delivery</h3>
+        <p>The courier records a signature or a photo when the parcel is handed over.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="account reveal">
+      <p>Ready to send? Sign in or create an account.</p>
+      <div>
+        <a class="btn btn-line" href="login.html">Login</a>
+        <a class="btn btn-md" href="login.html#register">Register</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="logo" href="index.html" aria-label="CMS home">CMS Logo</a>
+        <p>Courier Management System: parcel delivery for businesses and individuals.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="client.html">Ship a parcel</a></li>
+          <li><a href="index.html">Track a shipment</a></li>
+          <li><a href="services.html">Our services</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About us</a></li>
+          <li><a href="courier.html">For couriers</a></li>
+          <li><a href="team.html">Team</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li><a href="support.html">Help centre</a></li>
+          <li><a href="login.html">Login</a></li>
+          <li><a href="login.html#register">Register</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 CMS – Courier Management System</span>
+      <span>Enterprise Information Systems · FEUP</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Mobile menu
+const menuToggle=document.getElementById('menuToggle'),mainNav=document.getElementById('mainNav');
+menuToggle.addEventListener('click',()=>{const o=mainNav.classList.toggle('open');menuToggle.setAttribute('aria-expanded',String(o));});
+
+// Frontend only for now: search does nothing
+document.getElementById('searchForm').addEventListener('submit',e=>e.preventDefault());
+
+// Reduced motion: stop the background dot
+const reduceMotion=matchMedia('(prefers-reduced-motion:reduce)').matches;
+if(reduceMotion){const s=document.getElementById('routeSvg');if(s.pauseAnimations)s.pauseAnimations();}
+
+// Tracking: visual demo only (no validation yet)
+const trackResult=document.getElementById('trackResult'),tlFill=document.getElementById('tlFill'),
+      tlSteps=[...document.querySelectorAll('.tl-steps li')],trackBtn=document.querySelector('.track-row button');
+let tlTimers=[];
+document.getElementById('trackForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  tlTimers.forEach(clearTimeout);tlTimers=[];
+  tlSteps.forEach(li=>li.className='');tlFill.style.width='0%';
+  trackResult.classList.add('show');trackBtn.textContent='Tracking…';
+  const at=(ms,fn)=>tlTimers.push(setTimeout(fn,ms));
+  at(150,()=>tlSteps[0].classList.add('on'));
+  at(1000,()=>{tlSteps[0].className='done';tlSteps[1].classList.add('on');tlFill.style.width='50%';});
+  at(2100,()=>{tlSteps[1].className='done';tlSteps[2].classList.add('on');tlFill.style.width='100%';});
+  at(3100,()=>{tlSteps[2].className='done';trackBtn.textContent='Track';});
+});
+
+// Counters: count up from 0 as soon as the page loads
+const counters=document.querySelectorAll('[data-count]');
+function animateCount(el){
+  const target=Number(el.dataset.count),duration=2400,start=performance.now();
+  (function tick(now){
+    const p=Math.min((now-start)/duration,1),eased=1-Math.pow(1-p,3);
+    el.textContent=Math.round(target*eased).toLocaleString('en-US')+'+';
+    if(p<1)requestAnimationFrame(tick);
+  })(start);
+}
+if(!reduceMotion){
+  counters.forEach(c=>{c.textContent='0+';});
+  setTimeout(()=>counters.forEach(animateCount),450);
+}
+
+// Scroll reveal
+const reveals=document.querySelectorAll('.reveal');
+if('IntersectionObserver' in window){
+  const ro=new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');o.unobserve(e.target);}}),{threshold:.15});
+  reveals.forEach(el=>ro.observe(el));
+}else{reveals.forEach(el=>el.classList.add('visible'));}
+</script>
+</body>
+</html>

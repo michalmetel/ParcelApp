@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Courier Cockpit – CMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<!-- Leaflet (OpenStreetMap) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="../Assets/css/courier.css">
+</head>
+<body>
+
+<header class="nav-wrap">
+  <div class="container navbar">
+    <a class="logo" href="HomePage.html" aria-label="CMS home">CMS Logo</a>
+    <nav class="main-nav" id="mainNav" aria-label="Main">
+      <a href="HomePage.html">Home</a>
+      <a href="services.html">Our Services</a>
+      <a href="about.html">About Us</a>
+      <a href="support.html">Support</a>
+    </nav>
+    <div class="user">
+      <div class="user-text"><strong>Hello Ricardo!</strong><span>Courier</span></div>
+      <span class="avatar" aria-hidden="true">R</span>
+      <a class="logout" href="login.html">Logout</a>
+    </div>
+    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="sr-only">Courier cockpit</h1>
+
+  <div class="cockpit">
+    <!-- LEFT: vehicle + map -->
+    <section aria-labelledby="vehicleLabel">
+      <label class="label" id="vehicleLabel" for="vehicleSelect">Select Active Vehicle</label>
+      <div class="select-wrap">
+        <select id="vehicleSelect" required aria-describedby="vehicleMeta vehicleMsg">
+          <option value="">— Choose a vehicle —</option>
+        </select>
+      </div>
+      <div class="vehicle-meta" id="vehicleMeta" aria-live="polite"></div>
+      <p class="msg error" id="vehicleMsg" role="alert"></p>
+
+      <div class="card map-card">
+        <div id="map" role="region" aria-label="Map of the active route"></div>
+        <div class="map-foot">
+          <span>Origin: <b id="coordOrigin">—</b></span>
+          <span>Destination: <b id="coordDest">—</b></span>
+          <span>Route: <b id="routeInfo">—</b></span>
+        </div>
+      </div>
+      <p class="msg error" id="mapMsg" role="alert"></p>
+      <p class="msg" id="tileMsg" role="status"></p>
+    </section>
+
+    <!-- RIGHT: active order -->
+    <section aria-labelledby="orderTitle" id="activeArea">
+      <div id="activeOrder">
+        <div class="order-head">
+          <h2 id="orderTitle">Active Order: <span id="orderId">#2041</span></h2>
+          <span class="badge initiated" id="statusBadge">Initiated</span>
+        </div>
+        <p class="route" aria-label="Route">
+          <span>Route: <span id="routeFrom">Porto</span></span>
+          <span class="route-line" aria-hidden="true"></span>
+          <span id="routeTo">FEUP</span>
+        </p>
+
+        <div class="load" id="loadBox"></div>
+
+        <div class="steps" role="group" aria-label="Order status">
+          <div class="steps-row">
+            <button type="button" class="step" id="stepInit" data-to="initiated">Initiated</button>
+            <button type="button" class="step" id="stepProg" data-to="in_progress">In Progress</button>
+          </div>
+          <div class="final-row" id="finalRow">
+            <button type="button" class="step complete" id="stepDone" data-to="completed">Completed</button>
+            <button type="button" class="step cancel" id="stepCancel" data-to="cancelled">Cancelled</button>
+          </div>
+        </div>
+        <p class="msg" id="statusMsg" role="alert"></p>
+
+        <form class="cancel-panel" id="cancelForm" novalidate>
+          <label for="cancelReason">Reason for cancelling <span aria-hidden="true">*</span></label>
+          <textarea id="cancelReason" required placeholder="e.g. Recipient not at the address"></textarea>
+          <p class="msg error" id="cancelMsg" role="alert"></p>
+          <div class="cancel-actions">
+            <button type="button" class="btn btn-light" id="cancelBack">Back</button>
+            <button type="submit" class="btn btn-red">Confirm cancellation</button>
+          </div>
+        </form>
+
+        <div class="pod">
+          <h3 class="h2">Proof of delivery</h3>
+          <div class="card pod-card locked" id="podCard">
+            <div class="tabs" role="tablist">
+              <button class="tab" role="tab" id="tabSig" aria-controls="panelSig" aria-selected="true">Signature</button>
+              <button class="tab" role="tab" id="tabPhoto" aria-controls="panelPhoto" aria-selected="false" tabindex="-1">Photo</button>
+            </div>
+            <div class="tab-panel" id="panelSig" role="tabpanel" aria-labelledby="tabSig">
+              <div class="sig-wrap">
+                <canvas id="sigPad" aria-label="Signature pad: draw the recipient's signature"></canvas>
+                <div class="sig-actions">
+                  <button type="button" class="btn btn-light" id="sigClear">Clear</button>
+                  <button type="button" class="btn btn-blue" id="sigSave">Save</button>
+                </div>
+              </div>
+            </div>
+            <div class="tab-panel" id="panelPhoto" role="tabpanel" aria-labelledby="tabPhoto" hidden>
+              <label class="photo-drop" for="photoInput" id="photoDrop">
+                <img class="photo-icon" src="../Assets/images/icon-camera.svg" alt="">
+                <span>Tap to take or upload a delivery photo</span>
+              </label>
+              <input type="file" id="photoInput" accept="image/*" capture="environment" class="sr-only">
+            </div>
+            <p class="pod-saved" id="podSaved" aria-live="polite"></p>
+            <div class="pod-lock" id="podLock">Available once the delivery is In Progress.</div>
+          </div>
+          <p class="msg error" id="podMsg" role="alert"></p>
+        </div>
+      </div>
+
+      <div class="empty" id="noOrder" hidden>
+        <strong>No active order</strong>
+        <span>Accept an order from the queue below to start a new route.</span>
+      </div>
+    </section>
+  </div>
+
+  <!-- Order queue -->
+  <section class="table-section" aria-labelledby="queueTitle">
+    <div class="section-head">
+      <h2 class="h2" id="queueTitle">Available orders</h2>
+      <p id="queueNote">One active order at a time.</p>
+    </div>
+    <div class="card table-card">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Order ID</th><th>Route</th><th>Load</th><th><span class="sr-only">Action</span></th></tr></thead>
+          <tbody id="queueBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <p class="msg error" id="queueMsg" role="alert"></p>
+  </section>
+
+  <!-- Completed orders -->
+  <section class="table-section" aria-labelledby="doneTitle">
+    <div class="section-head">
+      <h2 class="h2" id="doneTitle">Completed orders</h2>
+    </div>
+    <div class="card table-card">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Order ID</th><th>Destination</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody id="doneBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© 2026 CMS – Courier Management System</span>
+    <nav aria-label="Footer"><a href="HomePage.html">Home</a><a href="support.html">Support</a><a href="team.html">Team</a></nav>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="../Assets/js/courier.js"></script>
+</body>
+</html>
