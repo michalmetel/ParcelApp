@@ -1,0 +1,304 @@
+/* =========================================
+   BASE - used by every page
+   ========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #2c4060;
+    min-height: 100vh;
+    padding: 30px;
+    background: linear-gradient(135deg, #d6f0fa, #a9c4e4, #6584ba);
+}
+
+h1 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 22px;
+    margin-bottom: 25px;
+}
+
+/* section titles, e.g. "Pending Staff Approvals" */
+h2 {
+    font-size: 20px;
+    margin: 25px 0 10px 0;
+}
+
+a {
+    color: #5b7bb8;
+}
+
+/* keeps the content from getting too wide on big screens */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+
+/* =========================================
+   BOX - white panel with shadow
+   (dashboard cards, login box, track box)
+   ========================================= */
+
+.box {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+/* =========================================
+   TWO COLUMNS - e.g. form on the left, map on the right
+   ========================================= */
+
+.two-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+
+/* =========================================
+   TABLE
+   ========================================= */
+
+/* wrapper lets a wide table scroll sideways on a phone */
+.table-wrap {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.table th {
+    background-color: #dcdee6;
+    text-align: left;
+    font-weight: normal;
+    font-size: 18px;
+    padding: 14px 20px;
+}
+
+.table td {
+    padding: 12px 20px;
+    border-top: 1px solid #e2e2e2;
+}
+
+/* every second row slightly grey */
+.table tbody tr:nth-child(even) {
+    background-color: #f4f4f6;
+}
+
+
+/* =========================================
+   BADGES - coloured status labels
+   use: <span class="badge pending">Pending</span>
+   ========================================= */
+
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+.pending {
+    background-color: #ffd21f;
+    color: black;
+}
+
+.valid {
+    background-color: #00d150;
+    color: white;
+}
+
+.expired {
+    background-color: #ff1a1a;
+    color: white;
+}
+
+
+/* =========================================
+   BUTTONS
+   use: <button class="btn">Login</button>
+        <button class="btn btn-green">Approve</button>
+   works also on links: <a href="login.html" class="btn">Login</a>
+   ========================================= */
+
+.btn {
+    display: inline-block;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 8px;
+    background-color: #5b7bb8;
+    color: white;
+    font-size: 15px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    opacity: 0.85;
+}
+
+.btn-green {
+    background-color: #00d150;
+    color: black;
+    border-radius: 15px;
+}
+
+.btn-red {
+    background-color: #ff1a1a;
+    color: white;
+    border-radius: 15px;
+}
+
+.btn-white {
+    background-color: white;
+    color: #2c4060;
+}
+
+/* button as wide as its parent (e.g. "Login", "Submit Order") */
+.btn-full {
+    width: 100%;
+}
+
+
+/* =========================================
+   FORMS
+   use: <form class="form" novalidate onsubmit="return validateForm(this)">
+   ========================================= */
+
+.form label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 5px;
+}
+
+.form input,
+.form select,
+.form textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #888;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: inherit;
+}
+
+.form textarea {
+    height: 80px;
+    resize: vertical;
+}
+
+.form .btn {
+    margin-top: 15px;
+}
+
+/* added by validation.js to a wrong field */
+.form .input-error {
+    border: 2px solid #ff1a1a;
+}
+
+/* red text under a wrong field, added by validation.js */
+.error {
+    color: #ff1a1a;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+
+/* =========================================
+   MAP - Leaflet needs a fixed height, otherwise the map is invisible
+   use: <div id="map" class="map"></div>
+   ========================================= */
+
+.map {
+    height: 320px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+/* =========================================
+   TEAM PAGE
+   ========================================= */
+
+.team {
+    max-width: 700px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 15px;
+    row-gap: 50px;
+}
+
+.card {
+    text-align: center;
+}
+
+.photo {
+    height: 150px;
+    background-color: rgba(70, 100, 145, 0.35);
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.photo svg {
+    width: 40px;
+    height: 40px;
+    fill: none;
+    stroke: white;
+    stroke-width: 2;
+}
+
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 4%;
+}
+
+.card h2 {
+    font-size: 14px;
+    margin: 12px 0 0 0;
+}
+
+.card p {
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+
+/* =========================================
+   PHONE - everything in one column
+   ========================================= */
+
+@media (max-width: 700px) {
+    body {
+        padding: 15px;
+    }
+
+    .two-cols {
+        grid-template-columns: 1fr;
+    }
+
+    .team {
+        grid-template-columns: 1fr;
+    }
+}
