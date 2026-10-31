@@ -1,0 +1,89 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #2c4060;
+    min-height: 100vh;
+    padding: 30px;
+    background: linear-gradient(135deg, #d6f0fa, #a9c4e4, #6584ba);
+}
+
+h1 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 22px;
+    margin-bottom: 25px;
+}
+
+/* grid of cards: 3 in a row */
+.team {
+    max-width: 700px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 15px;
+    row-gap: 40px;
+}
+
+.card {
+    text-align: center;
+}
+
+/* frame for the photo (or the empty icon) */
+.photo {
+    height: 150px;
+    background-color: rgba(70, 100, 145, 0.35);
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* empty person icon */
+.photo svg {
+    width: 40px;
+    height: 40px;
+    fill: none;
+    stroke: white;
+    stroke-width: 2;
+}
+
+/* real photo fills the whole frame, face stays visible */
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 5%;
+}
+
+/* name */
+.card h2 {
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+/* student ID, email, course */
+.card p {
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.card a {
+    color: #2c4060;
+}
+
+/* phone: one card per row */
+@media (max-width: 600px) {
+    body {
+        padding: 15px;
+    }
+
+    .team {
+        grid-template-columns: 1fr;
+    }
+}
