@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Staff Panel – CMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../Assets/css/staff.css">
+</head>
+<body>
+
+<header class="nav-wrap">
+  <div class="container navbar">
+    <a class="logo" href="HomePage.html" aria-label="CMS home">CMS Logo</a>
+    <nav class="main-nav" id="mainNav" aria-label="Main">
+      <a href="HomePage.html">Home</a>
+      <a href="services.html">Our Services</a>
+      <a href="about.html">About Us</a>
+      <a href="support.html">Support</a>
+    </nav>
+    <div class="user">
+      <div class="user-text"><strong>Hello Ricardo!</strong><span>Staff</span></div>
+      <span class="avatar" aria-hidden="true">R</span>
+      <a class="logout" href="login.html">Logout</a>
+    </div>
+    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="sr-only">Staff panel</h1>
+
+  <!-- Pending couriers -->
+  <section aria-labelledby="couriersTitle">
+    <h2 class="section-title" id="couriersTitle">Pending Approvals: Couriers</h2>
+    <div class="card table-card">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Documents</th>
+              <th>Date Received</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="couriersBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pending vehicles -->
+  <section aria-labelledby="vehiclesTitle">
+    <h2 class="section-title" id="vehiclesTitle">Pending Approvals: Vehicles</h2>
+    <div class="card table-card">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Licence plate</th>
+              <th>Model</th>
+              <th>Type</th>
+              <th>Insurance</th>
+              <th>Inspection</th>
+            </tr>
+          </thead>
+          <tbody id="vehiclesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© 2026 CMS – Courier Management System</span>
+    <nav aria-label="Footer"><a href="HomePage.html">Home</a><a href="support.html">Support</a><a href="TeamPage.html">Team</a></nav>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="../Assets/js/staff.js"></script>
+</body>
+</html>
